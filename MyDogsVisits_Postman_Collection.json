@@ -1,0 +1,535 @@
+{
+    "info": {
+        "_postman_id": "mydogsvisits-api-collection",
+        "name": "MyDogsVisits API",
+        "description": "Kolekcja testowa Postman dla backendu aplikacji MyDogsVisits (Laravel + Redis + Sanctum).",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost/api",
+            "type": "string"
+        },
+        {
+            "key": "bearerToken",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "System",
+            "item": [
+                {
+                    "name": "Ping / Test CORS",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/ping",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["ping"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Autoryzacja (Auth)",
+            "item": [
+                {
+                    "name": "Rejestracja",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.collectionVariables.set('bearerToken', jsonData.token);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Jan Kowalski\",\n    \"email\": \"jan@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/register",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["register"]
+                        }
+                    }
+                },
+                {
+                    "name": "Logowanie",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.collectionVariables.set('bearerToken', jsonData.token);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"jan@example.com\",\n    \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/login",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["login"]
+                        }
+                    }
+                },
+                {
+                    "name": "Wylogowanie",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{bearerToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/logout",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["logout"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Profil Użytkownika",
+            "item": [
+                {
+                    "name": "Zmiana Emaila",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{bearerToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"nowy.email@example.com\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/profile/email",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["profile", "email"]
+                        }
+                    }
+                },
+                {
+                    "name": "Zmiana Hasła",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{bearerToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"current_password\": \"password123\",\n    \"password\": \"newpassword123\",\n    \"password_confirmation\": \"newpassword123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/profile/password",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["profile", "password"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Wizyty (Visits)",
+            "item": [
+                {
+                    "name": "Pobierz wizyty (Kalendarz)",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{bearerToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/visits?start=2026-09-28 00:00:00&end=2026-10-04 23:59:59",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["visits"],
+                            "query": [
+                                {
+                                    "key": "start",
+                                    "value": "2026-09-28 00:00:00"
+                                },
+                                {
+                                    "key": "end",
+                                    "value": "2026-10-04 23:59:59"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Dodaj nową wizytę",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{bearerToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"client_name\": \"Jan Kowalski\",\n    \"dog_name\": \"Lucky\",\n    \"dog_breed\": \"Yorkshire Terrier\",\n    \"dog_age\": 3,\n    \"dog_weight\": 3.2,\n    \"service_id\": 1,\n    \"start_time\": \"2026-10-13 11:00:00\",\n    \"end_time\": \"2026-10-13 13:00:00\",\n    \"price\": 150,\n    \"description\": \"Standardowe strzyżenie i kąpiel pielęgnacyjna.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/visits",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["visits"]
+                        }
+                    }
+                },
+                {
+                    "name": "Pobierz szczegóły wizyty + historię psa",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{bearerToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/visits/1",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["visits", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Edytuj wizytę",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{bearerToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"price\": 160,\n    \"description\": \"Zaktualizowany opis wizyty.\",\n    \"dog_weight\": 3.4\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/visits/1",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["visits", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Odwołaj / Usuń wizytę",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{bearerToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/visits/1",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["visits", "1"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Klienci (Clients)",
+            "item": [
+                {
+                    "name": "Szukaj klientów (Autocomplete)",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{bearerToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/clients?query=Jan",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["clients"],
+                            "query": [
+                                {
+                                    "key": "query",
+                                    "value": "Jan"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Dodaj klienta",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{bearerToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Mateusz Wiśniewski\",\n    \"phone\": \"+48 123 456 789\",\n    \"email\": \"mateusz@example.com\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/clients",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["clients"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Usługi (Services)",
+            "item": [
+                {
+                    "name": "Pobierz listę usług",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{bearerToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/services",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["services"]
+                        }
+                    }
+                },
+                {
+                    "name": "Dodaj usługę",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{bearerToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Strzyżenie psa\",\n    \"default_price\": 150.00\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/services",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["services"]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
