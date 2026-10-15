@@ -10,6 +10,7 @@ return [
         'http://127.0.0.1:3001',
         'https://fizjoterapia-kaczmarek.pl',
         'https://psyapi.fizjoterapia-kaczmarek.pl',
+        'https://psy.fizjoterapia-kaczmarek.pl',
     ],
     'allowed_origins_patterns' => [],
     'allowed_headers' => ['*'],
