@@ -34,29 +34,34 @@ class AuthController extends Controller
     }
 
     // Logowanie
-    public function login(Request $request)
-    {
-        $fields = $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
+public function login(Request $request)
+{
+    $fields = $request->validate([
+        'email' => 'required|string|email',
+        'password' => 'required|string',
+    ], [
+        'email.required' => 'Uzupełnij adres e-mail',
+        'email.email' => 'Błędny adres e-mail',
+        'password.required' => 'Pole hasło jest wymagane',
+    ]);
 
-        $user = User::where('email', $fields['email'])->first();
+    $user = User::where('email', $fields['email'])->first();
 
-        if (!$user || !Hash::check($fields['password'], $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['Błędne dane logowania.'],
-            ]);
-        }
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'message' => 'Zalogowano pomyślnie',
-            'user' => $user,
-            'token' => $token,
+    if (!$user || !Hash::check($fields['password'], $user->password)) {
+        throw ValidationException::withMessages([
+            'email' => ['Błędne dane logowania'],
         ]);
     }
+
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    return response()->json([
+        'message' => 'Zalogowano pomyślnie',
+        'user' => $user,
+        'token' => $token,
+    ]);
+}
+
 
     // Wylogowanie
     public function logout(Request $request)
