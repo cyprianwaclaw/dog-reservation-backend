@@ -46,6 +46,7 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
+            //  'timezone' => '+02:00', // lepiej: patrz uwaga niżej
             'url' => env('DB_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),

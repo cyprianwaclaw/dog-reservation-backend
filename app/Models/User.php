@@ -44,4 +44,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Visit::class);
     }
+    public function breeds()
+{
+    return $this->hasMany(Breed::class);
+}
 }

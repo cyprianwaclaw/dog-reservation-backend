@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Breed;
 use App\Models\Client;
 use App\Models\Dog;
 use App\Models\Service;
@@ -23,32 +24,42 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password123'),
         ]);
 
-        // 2. Katalog usług groomera
-        $servicesData = [
-            ['name' => 'Strzyżenie psa', 'default_price' => 150.00],
-            ['name' => 'Kąpiel i czesanie', 'default_price' => 120.00],
-            ['name' => 'Obcinanie pazurków', 'default_price' => 40.00],
-            ['name' => 'Trymowanie sierści', 'default_price' => 180.00],
-            ['name' => 'Czyszczenie uszu i oczu', 'default_price' => 30.00],
-            ['name' => 'Kąpiel higieniczna', 'default_price' => 90.00],
-            ['name' => 'Rozczesywanie kołtunów', 'default_price' => 100.00],
+        // 2. Tworzenie ras psów w nowej tabeli `breeds`
+        $breedNames = [
+            'Yorkshire Terrier', 'Labrador Retriever', 'Golden Retriever', 'Beagle',
+            'Pudel Miniaturowy', 'Owczarek Niemiecki', 'Buldog Francuski',
+            'Shih Tzu', 'Maltańczyk', 'Mieszaniec / Kundelek', 'Bichon Frise',
+            'Cavalier King Charles Spaniel', 'Sznaucer Miniaturowy', 'Cocker Spaniel'
+        ];
+
+        $breedsMap = [];
+        foreach ($breedNames as $bName) {$breed = Breed::create([
+                'user_id' => null, // Rasy globalne
+                'name' => $bName,
+            ]);
+            $breedsMap[$bName] =$breed->id;
+        }
+
+        // 3. Katalog usług groomera (bez ceny domyślnej)
+        $servicesNames = [
+            'Strzyżenie psa',
+            'Kąpiel i czesanie',
+            'Obcinanie pazurków',
+            'Trymowanie sierści',
+            'Czyszczenie uszu i oczu',
+            'Kąpiel higieniczna',
+            'Rozczesywanie kołtunów',
         ];
 
         $services = [];
-        foreach ($servicesData as $sData) {
-            $services[] = Service::create([
+        foreach ($servicesNames as $sName) {$services[] = Service::create([
                 'user_id' => $user->id,
-                'name' => $sData['name'],
-                'default_price' => $sData['default_price'],
+                'name' => $sName,
             ]);
         }
 
-        // 3. Rasa i imiona dla psa "Lucky" z zrzutu ekranu
-        $breeds = [
-            'Yorkshire Terrier', 'Labrador Retriever', 'Golden Retriever', 'Beagle',
-            'Pudel Miniaturowy', 'Owczarek Niemiecki', 'Buldog Francuski',
-            'Shih Tzu', 'Maltańczyk', 'Mieszaniec'
-        ];
+        // Przykładowe ceny przypisane do usług w wizytach
+        $servicePrices = [150, 120, 40, 180, 30, 90, 100];
 
         // Lista klientów
         $clientsNames = [
@@ -62,25 +73,23 @@ class DatabaseSeeder extends Seeder
         $dogNames = ['Lucky', 'Burek', 'Max', 'Luna', 'Bella', 'Charlie', 'Molly', 'Rocky', 'Buddy', 'Daisy', 'Milo', 'Coco', 'Oscar', 'Teddy', 'Toby'];
 
         // 4. Tworzenie 20 klientów, ich psów oraz wizyt
-        foreach ($clientsNames as $index => $clientName) {
-            $client = Client::create([
+        foreach ($clientsNames as$index => $clientName) {$client = Client::create([
                 'user_id' => $user->id,
                 'name' => $clientName,
                 'phone' => '+48 600 ' . rand(100, 999) . ' ' . rand(100, 999),
                 'email' => 'klient' . ($index + 1) . '@example.com',
             ]);
 
-            // Dedykowany pies Lucky dla pierwszego klienta (zgodnie ze screenem)
-            if ($index === 0) {
-                $dog = Dog::create([
+            // Dedykowany pies Lucky dla pierwszego klienta
+            if ($index === 0) {$dog = Dog::create([
                     'client_id' => $client->id,
+                    'breed_id' => $breedsMap['Yorkshire Terrier'],
                     'name' => 'Lucky',
-                    'breed' => 'Yorkshire Terrier',
-                    'age' => 3,
-                    'weight' => 3.20,
+                    'age' => 3.0,
+                    'weight' => 3.2,
                 ]);
 
-                // Wizyty historyczne z ekranu
+                // Wizyty historyczne dla Lucky'ego
                 Visit::create([
                     'user_id' => $user->id,
                     'client_id' => $client->id,
@@ -88,7 +97,7 @@ class DatabaseSeeder extends Seeder
                     'service_id' => $services[1]->id, // Kąpiel i czesanie
                     'start_time' => '2026-09-10 10:00:00',
                     'end_time' => '2026-09-10 11:30:00',
-                    'price' => 120.00,
+                    'price' => 120,
                     'description' => 'Przegląd skóry, wyczesywanie podszerstka. Pies zachowywał się bardzo dobrze.',
                     'status' => 'completed',
                 ]);
@@ -100,7 +109,7 @@ class DatabaseSeeder extends Seeder
                     'service_id' => $services[2]->id, // Obcinanie pazurków
                     'start_time' => '2026-08-22 14:00:00',
                     'end_time' => '2026-08-22 14:30:00',
-                    'price' => 40.00,
+                    'price' => 40,
                     'description' => 'Krótka wizyta, obcięte pazurki na wszystkich łapach.',
                     'status' => 'completed',
                 ]);
@@ -112,7 +121,7 @@ class DatabaseSeeder extends Seeder
                     'service_id' => $services[0]->id, // Strzyżenie psa
                     'start_time' => '2026-08-05 09:00:00',
                     'end_time' => '2026-08-05 10:30:00',
-                    'price' => 150.00,
+                    'price' => 150,
                     'description' => 'Pełne strzyżenie letnie, skracanie firanki i uszu.',
                     'status' => 'completed',
                 ]);
@@ -125,33 +134,32 @@ class DatabaseSeeder extends Seeder
                     'service_id' => $services[0]->id,
                     'start_time' => '2026-10-13 11:00:00',
                     'end_time' => '2026-10-13 13:00:00',
-                    'price' => 150.00,
+                    'price' => 150,
                     'description' => 'Standardowe strzyżenie i kąpiel pielęgnacyjna.',
                     'status' => 'scheduled',
                 ]);
             } else {
                 // Pozostali klienci i ich psy
-                $dName = array_shift($dogNames) ?? 'Pies_' . $index;
+                $dName = array_shift($dogNames) ?? 'Pies_' .$index;
+                $randomBreedId = array_rand($breedsMap);
+
                 $dog = Dog::create([
                     'client_id' => $client->id,
+                    'breed_id' => $breedsMap[$randomBreedId],
                     'name' => $dName,
-                    'breed' => $breeds[array_rand($breeds)],
                     'age' => rand(1, 12),
                     'weight' => rand(25, 300) / 10,
                 ]);
 
                 // Generowanie 3-5 wizyt na psa
-                for ($v = 0; $v < rand(3, 5); $v++) {
-                    $service = $services[array_rand($services)];
+                for ($v = 0; $v < rand(3, 5); $v++) {$serviceIndex = array_rand($services);$service = $services[$serviceIndex];
 
-                    // Rozrzut od -45 dni do +30 dni od dziś
-                    $daysOffset = rand(-45, 30);
-                    $hour = rand(8, 16);
+                    $daysOffset = rand(-45, 30);$hour = rand(8, 16);
 
                     $startTime = Carbon::now()->addDays($daysOffset)->setHour($hour)->setMinute(0)->setSecond(0);
-                    $endTime = (clone $startTime)->addHours(rand(1, 2));
+                    $endTime = (clone$startTime)->addHours(rand(1, 2));
 
-                    $status = $startTime->isPast() ? 'completed' : 'scheduled';
+                    $status =$startTime->isPast() ? 'completed' : 'scheduled';
 
                     Visit::create([
                         'user_id' => $user->id,
@@ -160,7 +168,7 @@ class DatabaseSeeder extends Seeder
                         'service_id' => $service->id,
                         'start_time' => $startTime->toDateTimeString(),
                         'end_time' => $endTime->toDateTimeString(),
-                        'price' => $service->default_price,
+                        'price' => $servicePrices[$serviceIndex],
                         'description' => 'Usługa: ' . $service->name . '. Pies zachowywał się bez zastrzeżeń.',
                         'status' => $status,
                     ]);

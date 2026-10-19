@@ -12,7 +12,6 @@ class Service extends Model
     protected $fillable = [
         'user_id',
         'name',
-        'default_price',
     ];
 
     public function user()

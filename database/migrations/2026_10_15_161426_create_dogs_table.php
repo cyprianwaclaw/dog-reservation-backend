@@ -11,14 +11,14 @@ return new class extends Migration
         Schema::create('dogs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained()->onDelete('cascade');
+            $table->foreignId('breed_id')->nullable()->constrained('breeds')->nullOnDelete();
             $table->string('name');
-            $table->string('breed')->nullable();
-            $table->integer('age')->nullable();
-            $table->decimal('weight', 5, 2)->nullable();
+             $table->decimal('age', 5, 1)->nullable();
+            $table->decimal('weight', 5, 1)->nullable();
             $table->timestamps();
 
-            // Indeks wyszukiwania psów po klauzulach
-            $table->index(['client_id', 'name']);
+            // Indeks do wyszukiwania psów danego klienta po imieniu
+            $table->index(['client_id', 'name'], 'idx_dogs_client_name');
         });
     }
 

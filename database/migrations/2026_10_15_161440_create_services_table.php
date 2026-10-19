@@ -12,10 +12,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('name');
-            $table->decimal('default_price', 8, 2)->nullable();
             $table->timestamps();
 
-            $table->index(['user_id', 'name']);
+            // Indeks do sortowania i wyszukiwania usług użytkownika
+            $table->index(['user_id', 'name'], 'idx_services_user_name');
         });
     }
 

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,28 +21,16 @@ class Visit extends Model
     ];
 
     protected $casts = [
-        'start_time' => 'datetime',
-        'end_time' => 'datetime',
-        'price' => 'decimal:2',
+        'price' => 'integer',
+        // BRAK 'start_time' oraz 'end_time' tutaj!
     ];
 
     public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
+    {return $this->belongsTo(User::class);}
     public function client()
-    {
-        return $this->belongsTo(Client::class);
-    }
-
+    {return $this->belongsTo(Client::class);}
     public function dog()
-    {
-        return $this->belongsTo(Dog::class);
-    }
-
+    {return $this->belongsTo(Dog::class);}
     public function service()
-    {
-        return $this->belongsTo(Service::class);
-    }
+    {return $this->belongsTo(Service::class);}
 }
